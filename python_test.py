@@ -10,3 +10,5 @@ plt.xlabel("x", fontsize = 12)
 plt.ylabel("y", fontsize = 12)
 plt.title("y = tan(x)", fontsize = 14)
 plt.show()
+
+# test
