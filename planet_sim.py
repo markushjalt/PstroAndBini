@@ -2,7 +2,7 @@ import pygame
 import math
 pygame.init() # initializes module
 
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 1000, 1000
 WIN = pygame.display.set_mode((WIDTH, HEIGHT)) # creates the pygame window
 pygame.display.set_caption("Planet Simulation")
 
@@ -11,13 +11,17 @@ YELLOW = (255, 255, 0)
 BLUE = (100, 149, 237)
 RED = (188, 39, 50)
 DARK_GREY = (80, 78, 81)
+BROWN = (150, 75, 0)
+LIGHT_BROWN = (196, 164, 132)
+LIGHT_GREEN = (144, 238, 144)
+DARK_BLUE = (0, 0, 255)
 
 FONT = pygame.font.SysFont("comicsans", 16)
 
 class Planet:
     AU = 149.6e6 * 1000 # 1AU in meter
     G = 6.67428e-11
-    SCALE = 250 / AU # 1AU = 100 pixels
+    SCALE = 200 / AU # 1AU = 100 pixels
     TIMESTEP = 3600*24 # 1 day
 
     def __init__(self, x, y, radius, color, mass):
@@ -85,7 +89,19 @@ class Planet:
         self.y += self.y_vel * self.TIMESTEP
         self.orbit.append((self.x, self.y))
 
+#def pre_questions():
+    
+
+
+
 def main():
+    print("Do you want to study the inner or outer planets?")
+    ans = input("Answer with \'inner\', \'outer\' or \'all\':\n")
+    if ans == "inner":
+        Planet.SCALE = 200 / Planet.AU
+    else:
+        Planet.SCALE = 15 / Planet.AU
+
     run = True
     clock = pygame.time.Clock() 
 
@@ -104,7 +120,33 @@ def main():
     venus = Planet(0.723 * Planet.AU, 0, 14, WHITE, 4.8685 * 10**24)
     venus.y_vel = -35.02 * 1000
 
-    planets = [sun, earth, mars, mercury, venus]
+    jupiter = Planet(4.97 * Planet.AU, 0, 26, BROWN, 1.898 * 10**27)
+    jupiter.y_vel = -13.06 * 1000
+
+    saturn = Planet(9.77 * Planet.AU, 0, 20, LIGHT_BROWN, 5.683 * 10**26)
+    saturn.y_vel = -9.69 * 1000
+
+    uranus = Planet(19.8 * Planet.AU, 0, 14, LIGHT_GREEN, 8.681 * 10**25)
+    uranus.y_vel = -6.79 *1000
+
+    neptune = Planet(30 * Planet.AU, 0, 14, DARK_BLUE, 1.024 * 10**26)
+    neptune.y_vel = -5.45 * 1000
+
+
+
+    planets = [sun, earth, mars, mercury, venus, jupiter, saturn, uranus, neptune]
+    planets_inner = [sun, mercury, venus, earth, mars]
+    planets_outer = [sun, jupiter, saturn, uranus, neptune]
+
+    if ans == "inner":
+        planets = planets_inner
+    elif ans == "outer":
+        planets = planets_outer
+        sun.radius = sun.radius / 2
+        jupiter.radius = jupiter.radius / 2
+        saturn.radius = saturn.radius / 2
+        uranus.radius = uranus.radius / 2
+        neptune.radius = neptune.radius / 2
 
     while run: 
         clock.tick(60) # update screen max 60 times/sec
@@ -123,4 +165,5 @@ def main():
     
     pygame.quit()
 
+#pre_questions()
 main()
