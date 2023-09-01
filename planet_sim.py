@@ -3,8 +3,6 @@ import math
 pygame.init() # initializes module
 
 WIDTH, HEIGHT = 1000, 1000
-WIN = pygame.display.set_mode((WIDTH, HEIGHT)) # creates the pygame window
-pygame.display.set_caption("Planet Simulation")
 
 WHITE = (255, 255, 255) # define color white
 YELLOW = (255, 255, 0)
@@ -89,10 +87,6 @@ class Planet:
         self.y += self.y_vel * self.TIMESTEP
         self.orbit.append((self.x, self.y))
 
-#def pre_questions():
-    
-
-
 
 def main():
     print("Do you want to study the inner or outer planets?")
@@ -101,6 +95,10 @@ def main():
         Planet.SCALE = 200 / Planet.AU
     else:
         Planet.SCALE = 15 / Planet.AU
+
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT)) # creates the pygame window
+    pygame.display.set_caption("Planet Simulation")
+
 
     run = True
     clock = pygame.time.Clock() 
@@ -165,6 +163,4 @@ def main():
     
     pygame.quit()
 
-#pre_questions()
 main()
-# test
