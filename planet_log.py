@@ -1,5 +1,6 @@
 import pygame
 import math
+import numpy as np
 
 pygame.init() # initializes module
 
@@ -23,9 +24,11 @@ class Planet:
     SCALE = 200 / AU # 1AU = 100 pixels
     TIMESTEP = 3600*24 # 1 day
 
-    def __init__(self, x, y, radius, color, mass):
+    def __init__(self, x, y, log_x, log_y, radius, color, mass):
         self.x = x
         self.y = y
+        self.log_x = log_x
+        self.log_y = log_y
         self. radius = radius
         self.color = color
         self.mass = mass
@@ -40,22 +43,27 @@ class Planet:
     def draw(self, win):
         x = self.x * self.SCALE + WIDTH / 2
         y = self.y * self.SCALE + HEIGHT / 2
+        x_log = np.log10(x) * self.SCALE + WIDTH / 2
+        y_log = np.log10(y) * self.SCALE + HEIGHT / 2
+        
 
         if len(self.orbit) > 2:
             updated_points = []
             for point in self.orbit:
                 x, y = point
                 x = x * self.SCALE + WIDTH / 2
-                y = y *self.SCALE + HEIGHT / 2
-                updated_points.append((x, y))
+                y = y * self.SCALE + HEIGHT / 2
+                x_log = np.log10(x) * self.SCALE + WIDTH / 2
+                y_log = np.log10(y) * self.SCALE + HEIGHT / 2
+                updated_points.append((x_log, y_log))
 
             pygame.draw.lines(win, self.color, False, updated_points, 2)
 
-        if not self.sun:
-            distance_text = FONT.render(f"{round(self.distance_to_sun/1000, 1)}km", 1, WHITE)
-            win.blit(distance_text, (x - distance_text.get_width() / 2, y - distance_text.get_height() / 2))
+        #if not self.sun:
+            #distance_text = FONT.render(f"{round(self.distance_to_sun/1000, 1)}km", 1, WHITE)
+            #win.blit(distance_text, (x - distance_text.get_width() / 2, y - distance_text.get_height() / 2))
 
-        pygame.draw.circle(win, self.color, (x,y), self.radius)
+        pygame.draw.circle(win, self.color, (x_log,y_log), self.radius)
 
     def attraction(self, other):
         other_x, other_y = other.x, other.y 
@@ -83,10 +91,16 @@ class Planet:
 
         self.x_vel += total_fx / self.mass * self.TIMESTEP 
         self.y_vel += total_fy / self.mass * self.TIMESTEP
+        x_vel_log = np.log10(self.x_vel)
+        y_vel_log = np.log10(self.y_vel)
 
         self.x += self.x_vel * self.TIMESTEP
         self.y += self.y_vel * self.TIMESTEP
-        self.orbit.append((self.x, self.y))
+
+
+        x_log = np.log10(x_vel_log * self.TIMESTEP)
+        y_log = np.log10(y_vel_log * self.TIMESTEP)
+        self.orbit.append((x_log, y_log))
 
 
 def main():
@@ -104,31 +118,31 @@ def main():
     run = True
     clock = pygame.time.Clock() 
 
-    sun = Planet(0, 0, 30, YELLOW, 1.98892 * 10**30)
+    sun = Planet(0, 0, 10**-99, 10**-99, 30, YELLOW, 1.98892 * 10**30)
     sun.sun = True
 
-    earth  = Planet(-1 * Planet.AU, 0, 16, BLUE, 5.9742 * 10**24)
-    earth.y_vel = 29.783 * 1000
+    earth  = Planet(1 * Planet.AU, 0, np.log10(1 * Planet.AU), 10**-99, 16, BLUE, 5.9742 * 10**24)
+    earth.y_vel = -29.783 * 1000
 
-    mars = Planet(-1.524 * Planet.AU, 0, 12, RED, 6.39 * 10**23)
-    mars.y_vel = 24.077 * 1000
+    mars = Planet(1.524 * Planet.AU, 0, np.log10(1.524 * Planet.AU), 10**-99, 12, RED, 6.39 * 10**23)
+    mars.y_vel = -24.077 * 1000
 
-    mercury = Planet(0.387 * Planet.AU, 0, 8, DARK_GREY, 0.330 * 10**24)
+    mercury = Planet(0.387 * Planet.AU, 0, np.log10(0.387 * Planet.AU), 10**-99, 8, DARK_GREY, 0.330 * 10**24)
     mercury.y_vel = -47.4 * 1000
 
-    venus = Planet(0.723 * Planet.AU, 0, 14, WHITE, 4.8685 * 10**24)
+    venus = Planet(0.723 * Planet.AU, 0, np.log10(0.723 * Planet.AU), 10**-99, 14, WHITE, 4.8685 * 10**24)
     venus.y_vel = -35.02 * 1000
 
-    jupiter = Planet(4.97 * Planet.AU, 0, 26, BROWN, 1.898 * 10**27)
+    jupiter = Planet(4.97 * Planet.AU, 0, np.log10(4.97 * Planet.AU), 10**-99, 26, BROWN, 1.898 * 10**27)
     jupiter.y_vel = -13.06 * 1000
 
-    saturn = Planet(9.77 * Planet.AU, 0, 20, LIGHT_BROWN, 5.683 * 10**26)
+    saturn = Planet(9.77 * Planet.AU, 0, np.log10(9.77 * Planet.AU), 10**-99, 20, LIGHT_BROWN, 5.683 * 10**26)
     saturn.y_vel = -9.69 * 1000
 
-    uranus = Planet(19.8 * Planet.AU, 0, 14, LIGHT_GREEN, 8.681 * 10**25)
+    uranus = Planet(19.8 * Planet.AU, 0, np.log10(19.8 * Planet.AU), 10**-99, 14, LIGHT_GREEN, 8.681 * 10**25)
     uranus.y_vel = -6.79 *1000
 
-    neptune = Planet(30 * Planet.AU, 0, 14, DARK_BLUE, 1.024 * 10**26)
+    neptune = Planet(30 * Planet.AU, 0, np.log10(30 * Planet.AU), 10**-99, 14, DARK_BLUE, 1.024 * 10**26)
     neptune.y_vel = -5.45 * 1000
 
     
